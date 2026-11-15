@@ -3,18 +3,18 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+        stage('Source Code Verification') {
             steps {
-                echo 'Starting the voting application pipeline'
-                checkout scm
+                echo 'Source code downloaded successfully'
+                sh 'pwd'
+                sh 'ls -la'
             }
         }
 
-        stage('Build Information') {
+        stage('Docker Daemon Check') {
             steps {
-                echo 'Source code downloaded successfully'
-                sh 'git --version'
-                sh 'docker --version'
+                echo 'Checking Docker Engine connection'
+                sh 'docker ps'
             }
         }
     }
