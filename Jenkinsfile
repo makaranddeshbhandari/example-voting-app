@@ -17,5 +17,12 @@ pipeline {
                 sh 'docker ps'
             }
         }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Vote application Docker image'
+                sh 'docker build --target dev -t voting-app-vote:${BUILD_NUMBER} ./vote'
+            }
+        }
     }
 }
