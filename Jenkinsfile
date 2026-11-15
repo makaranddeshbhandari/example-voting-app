@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -27,15 +28,16 @@ pipeline {
         stage('Automated Integration Test') {
             steps {
                 echo 'Running automated integration tests'
-                sh 'docker compose -f result/docker-compose.test.yml up --build --exit-code-from sut'
+                sh 'docker compose -p voting-test-${BUILD_NUMBER} -f result/docker-compose.test.yml up --build --exit-code-from sut'
             }
         }
     }
 
     post {
         always {
-            echo 'Cleaning up test containers'
-            sh 'docker compose -f result/docker-compose.test.yml down'
+            echo 'Cleaning up test containers and volumes'
+            sh 'docker compose -p voting-test-${BUILD_NUMBER} -f result/docker-compose.test.yml down -v'
         }
     }
 }
+
