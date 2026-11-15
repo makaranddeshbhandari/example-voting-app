@@ -21,7 +21,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Vote application Docker image'
-                sh 'docker build --target dev -t voting-app-vote:${BUILD_NUMBER} ./vote'
+                sh 'docker build --target final -t voting-app-vote:${BUILD_NUMBER} ./vote'
             }
         }
     }
