@@ -24,5 +24,19 @@ pipeline {
                 sh 'docker build --target final -t voting-app-vote:${BUILD_NUMBER} ./vote'
             }
         }
+
+        stage('Automated Integration Test') {
+            steps {
+                echo 'Running automated integration tests'
+                sh 'docker compose -f result/docker-compose.test.yml up --build --exit-code-from sut'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up test containers'
+            sh 'docker compose -f result/docker-compose.test.yml down'
+        }
     }
 }
