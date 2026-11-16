@@ -1,7 +1,3 @@
-
-
-
-
 pipeline {
     agent any
 
@@ -88,6 +84,25 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy Application') {
+            steps {
+                echo 'Deploying the tested application version'
+
+                sh '''
+                    set -eu
+
+                    docker compose -p example-voting-app \
+                        -f docker-compose.deploy.yml pull vote result worker
+
+                    docker compose -p example-voting-app \
+                        -f docker-compose.deploy.yml up -d --no-build --remove-orphans vote result worker
+
+                    docker compose -p example-voting-app \
+                        -f docker-compose.deploy.yml ps
+                '''
+            }
+        }
     }
 
     post {
@@ -97,4 +112,3 @@ pipeline {
         }
     }
 }
-
