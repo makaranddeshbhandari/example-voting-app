@@ -1,10 +1,12 @@
 
 
 
+
 pipeline {
     agent any
 
     stages {
+
         stage('Source Code Verification') {
             steps {
                 echo 'Source code downloaded successfully'
@@ -48,9 +50,9 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Push Docker Images') {
             steps {
-                echo 'Pushing tested Vote image to Docker Hub'
+                echo 'Pushing all application images to Docker Hub'
 
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-credentials',
@@ -61,16 +63,27 @@ pipeline {
                         set +x
                         set -eu
 
-                        trap 'docker logout >/dev/null 2>&1 || true' EXIT
+                        export DOCKER_CONFIG="$(mktemp -d)"
+                        trap 'docker logout >/dev/null 2>&1 || true; rm -rf "$DOCKER_CONFIG"' EXIT
 
                         printf '%s' "$DOCKERHUB_TOKEN" | docker login \
                             --username "$DOCKERHUB_USERNAME" \
                             --password-stdin
 
                         docker tag "voting-app-vote:${BUILD_NUMBER}" \
-                            "$DOCKERHUB_USERNAME/voting-app:${BUILD_NUMBER}"
+                            "$DOCKERHUB_USERNAME/voting-app:vote-${BUILD_NUMBER}"
 
-                        docker push "$DOCKERHUB_USERNAME/voting-app:${BUILD_NUMBER}"
+                        docker tag "result-app:${BUILD_NUMBER}" \
+                            "$DOCKERHUB_USERNAME/voting-app:result-${BUILD_NUMBER}"
+
+                        docker tag "worker-app:${BUILD_NUMBER}" \
+                            "$DOCKERHUB_USERNAME/voting-app:worker-${BUILD_NUMBER}"
+
+                        docker push "$DOCKERHUB_USERNAME/voting-app:vote-${BUILD_NUMBER}"
+
+                        docker push "$DOCKERHUB_USERNAME/voting-app:result-${BUILD_NUMBER}"
+
+                        docker push "$DOCKERHUB_USERNAME/voting-app:worker-${BUILD_NUMBER}"
                     '''
                 }
             }
