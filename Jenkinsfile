@@ -42,7 +42,12 @@ pipeline {
         stage('Automated Integration Test') {
             steps {
                 echo 'Running automated integration tests'
-                sh 'docker compose -p voting-test-${BUILD_NUMBER} -f result/docker-compose.test.yml up --build --exit-code-from sut'
+
+                sh '''
+                    docker compose -p voting-test-${BUILD_NUMBER} \
+                        -f result/docker-compose.test.yml \
+                        up --build --exit-code-from sut
+                '''
             }
         }
 
@@ -96,10 +101,10 @@ pipeline {
                         -f docker-compose.deploy.yml pull vote result worker
 
                     docker compose -p example-voting-app \
-                        -f docker-compose.deploy.yml stop vote result worker
+                        -f docker-compose.deploy.yml rm -sf vote result worker
 
                     docker compose -p example-voting-app \
-                        -f docker-compose.deploy.yml up -d --no-build --force-recreate vote result worker
+                        -f docker-compose.deploy.yml up -d --no-build vote result worker
 
                     docker compose -p example-voting-app \
                         -f docker-compose.deploy.yml ps
@@ -111,7 +116,11 @@ pipeline {
     post {
         always {
             echo 'Cleaning up test containers and volumes'
-            sh 'docker compose -p voting-test-${BUILD_NUMBER} -f result/docker-compose.test.yml down -v'
+
+            sh '''
+                docker compose -p voting-test-${BUILD_NUMBER} \
+                    -f result/docker-compose.test.yml down -v
+            '''
         }
     }
 }
