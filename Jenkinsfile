@@ -96,7 +96,10 @@ pipeline {
                         -f docker-compose.deploy.yml pull vote result worker
 
                     docker compose -p example-voting-app \
-                        -f docker-compose.deploy.yml up -d --no-build --remove-orphans vote result worker
+                        -f docker-compose.deploy.yml stop vote result worker
+
+                    docker compose -p example-voting-app \
+                        -f docker-compose.deploy.yml up -d --no-build --force-recreate vote result worker
 
                     docker compose -p example-voting-app \
                         -f docker-compose.deploy.yml ps
