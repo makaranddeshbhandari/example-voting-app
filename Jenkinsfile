@@ -31,6 +31,34 @@ pipeline {
                 sh 'docker compose -p voting-test-${BUILD_NUMBER} -f result/docker-compose.test.yml up --build --exit-code-from sut'
             }
         }
+
+        stage('Push Docker Image') {
+            steps {
+                echo 'Pushing tested image to Docker Hub'
+
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKERHUB_USERNAME',
+                    passwordVariable: 'DOCKERHUB_TOKEN'
+                )]) {
+                    sh '''
+                        set +x
+                        set -eu
+
+                        trap 'docker logout >/dev/null 2>&1 || true' EXIT
+
+                        printf '%s' "$DOCKERHUB_TOKEN" | docker login \
+                            --username "$DOCKERHUB_USERNAME" \
+                            --password-stdin
+
+                        docker tag "voting-app-vote:${BUILD_NUMBER}" \
+                            "$DOCKERHUB_USERNAME/voting-app:${BUILD_NUMBER}"
+
+                        docker push "$DOCKERHUB_USERNAME/voting-app:${BUILD_NUMBER}"
+                    '''
+                }
+            }
+        }
     }
 
     post {
