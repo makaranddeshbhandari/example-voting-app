@@ -1,4 +1,6 @@
 
+
+
 pipeline {
     agent any
 
@@ -18,10 +20,24 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Vote Image') {
             steps {
                 echo 'Building Vote application Docker image'
                 sh 'docker build --target final -t voting-app-vote:${BUILD_NUMBER} ./vote'
+            }
+        }
+
+        stage('Build Result Image') {
+            steps {
+                echo 'Building Result application Docker image'
+                sh 'docker build -t result-app:${BUILD_NUMBER} ./result'
+            }
+        }
+
+        stage('Build Worker Image') {
+            steps {
+                echo 'Building Worker application Docker image'
+                sh 'docker build -t worker-app:${BUILD_NUMBER} ./worker'
             }
         }
 
@@ -34,7 +50,7 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                echo 'Pushing tested image to Docker Hub'
+                echo 'Pushing tested Vote image to Docker Hub'
 
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-credentials',
