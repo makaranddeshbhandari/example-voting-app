@@ -68,6 +68,8 @@ deal with them in Docker at a basic level.
 Webhook integration test - Jenkins
 Testing Jenkins webhook integration.
 
+smee --url https://smee.io/7IItzx3gJFRMyJlD --target 'http://127.0.0.1:8080/github-webhook/?relay=smee'
+
 
 
 
