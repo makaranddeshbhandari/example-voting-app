@@ -67,3 +67,15 @@ example of the various types of pieces and languages you might see (queues, pers
 deal with them in Docker at a basic level.
 Webhook integration test - Jenkins
 Testing Jenkins webhook integration.
+
+
+makarand@makarand-ASUS-TUF-Gaming-F15-FX506LHB-FX506LHB:~/example-voting-app$ smee --url https://smee.io/7IItzx3gJFRMyJlD --target http://localhost:3000/
+Connected to https://smee.io/7IItzx3gJFRMyJlD
+Forwarding https://smee.io/7IItzx3gJFRMyJlD to http://localhost:3000
+POST http://localhost:3000/ - 200
+^C
+makarand@makarand-ASUS-TUF-Gaming-F15-FX506LHB-FX506LHB:~/example-voting-app$ smee --url https://smee.io/7IItzx3gJFRMyJlD --target http://localhost:8080/github-webhook/
+Connected to https://smee.io/7IItzx3gJFRMyJlD
+Forwarding https://smee.io/7IItzx3gJFRMyJlD to http://localhost:8080/github-webhook
+
+
